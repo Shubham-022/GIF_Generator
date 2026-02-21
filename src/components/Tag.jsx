@@ -6,6 +6,8 @@ import { useState } from "react";
 const API_KEY = process.env.REACT_APP_GIPHY_API_KEY;
 
 const Tag = () => {
+    //handling loader
+    const [loadingTag, setLoadingTag] = useState(false);
 
     //handling input
     const [tag, setTag] = useState("");
@@ -19,9 +21,11 @@ const Tag = () => {
         console.log("call ke pehle")
         // const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=${tag}`;
         // const response = await axios.get(url);
+        setLoadingTag(true);
         const response = await axios.get("/v1/gifs/random", {
              params: { api_key: API_KEY, tag: tag }
         });
+        setLoadingTag(false);
         const { data } = response;
         const imageSource = data.data.images.downsized_large.url;
         setGif(imageSource);
@@ -42,7 +46,7 @@ const Tag = () => {
             </h1>
 
             <div className="w-full flex justify-center items-center min-h-[250px] bg-blue-100/20 rounded-xl overflow-hidden shadow-inner">
-                <img src={gif} alt="Tag gif" className="max-w-full max-h-[350px] object-contain transition-all duration-700 hover:scale-110" />
+                {loadingTag ? <div className="spinner"></div> : <img src={gif} alt="Tag gif" className="max-w-full max-h-[350px] object-contain transition-all duration-700 hover:scale-110" />}
             </div>
 
             <input

@@ -7,14 +7,19 @@ const API_KEY = process.env.REACT_APP_GIPHY_API_KEY;
 
 const Random = () => {
 
+    //handling loader
+    const [loading, setLoading] = useState(false);
+
     const [gif, setGif] = useState("");
     async function fetchData() {
         console.log("call ke pehle")
         // const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}`;
         // const response = await axios.get(url);
+        setLoading(true);
         const response = await axios.get("/v1/gifs/random", {
             params: { api_key: API_KEY }
         }); 
+        setLoading(false);
         const { data } = response;
         const imageSource = data.data.images.downsized_large.url;
         setGif(imageSource);
@@ -34,7 +39,7 @@ const Random = () => {
             </h1>
 
             <div className="w-full flex justify-center items-center min-h-[250px] bg-green-100/20 rounded-xl overflow-hidden shadow-inner">
-                <img src={gif} alt="random gif" className="max-w-full max-h-[350px] object-contain transition-all duration-700 hover:scale-110" />
+                {loading ? <div className="spinner"></div> : <img src={gif} alt="random gif" className="max-w-full max-h-[350px] object-contain transition-all duration-700 hover:scale-110" />}
             </div>
 
             <button
