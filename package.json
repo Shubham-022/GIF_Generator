@@ -34,6 +34,5 @@
   },
   "devDependencies": {
     "tailwindcss": "^3.2.7"
-  },
-  "proxy": "https://api.giphy.com"
+  }
 }

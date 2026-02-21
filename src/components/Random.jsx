@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const API_KEY = process.env.REACT_APP_GIPHY_API_KEY;
 
@@ -9,27 +8,27 @@ const Random = () => {
 
     //handling loader
     const [loading, setLoading] = useState(false);
-
     const [gif, setGif] = useState("");
-    async function fetchData() {
+
+    const fetchData = useCallback(async () => {
         console.log("call ke pehle")
-        // const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}`;
-        // const response = await axios.get(url);
         setLoading(true);
-        const response = await axios.get("/v1/gifs/random", {
-            params: { api_key: API_KEY }
-        }); 
+        try {
+            const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}`;
+            const response = await axios.get(url);
+            const { data } = response;
+            const imageSource = data.data.images.downsized_large.url;
+            setGif(imageSource);
+            console.log("call ke bad");
+        } catch (error) {
+            console.error("Error fetching random gif:", error);
+        }
         setLoading(false);
-        const { data } = response;
-        const imageSource = data.data.images.downsized_large.url;
-        setGif(imageSource);
-        console.log("call ke bad");
-        console.log(response)
-    }
+    }, []);
 
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [fetchData])
 
     return (
         <div className="w-11/12 max-w-[450px] bg-green-500 rounded-2xl border border-white shadow-2xl

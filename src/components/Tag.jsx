@@ -1,7 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const API_KEY = process.env.REACT_APP_GIPHY_API_KEY;
 
@@ -17,26 +16,27 @@ const Tag = () => {
 
     //handling api call and ..updating gif value
     const [gif, setGif] = useState("");
-    async function fetchData() {
+
+    const fetchData = useCallback(async () => {
         console.log("call ke pehle")
-        // const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=${tag}`;
-        // const response = await axios.get(url);
         setLoadingTag(true);
-        const response = await axios.get("/v1/gifs/random", {
-             params: { api_key: API_KEY, tag: tag }
-        });
+        try {
+            const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}&tag=${tag}`;
+            const response = await axios.get(url);
+            const { data } = response;
+            const imageSource = data.data.images.downsized_large.url;
+            setGif(imageSource);
+            console.log("call ke bad");
+        } catch (error) {
+            console.error("Error fetching tag gif:", error);
+        }
         setLoadingTag(false);
-        const { data } = response;
-        const imageSource = data.data.images.downsized_large.url;
-        setGif(imageSource);
-        console.log("call ke bad");
-        console.log(response)
-    }
+    }, [tag]);
 
     //api call using use effect in first render
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [fetchData])
 
     return (
         <div className="w-11/12 max-w-[450px] bg-blue-500 rounded-2xl border border-white shadow-2xl
