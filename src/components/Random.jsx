@@ -3,35 +3,49 @@ import axios from "axios";
 import { useEffect } from "react";
 import { useState } from "react";
 
-const API_KEY=process.env.REACT_APP_GIPHY_API_KEY;
+const API_KEY = process.env.REACT_APP_GIPHY_API_KEY;
 
-const Random=()=>{
+const Random = () => {
 
-     const [gif,setGif]=useState("");
-    async function fetchData(){
+    const [gif, setGif] = useState("");
+    async function fetchData() {
         console.log("call ke pehle")
-        const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}`;
-        const response=await axios.get(url);
-        const {data}=response;
-        const imageSource=data.data.images.downsized_large.url;
+        // const url = `https://api.giphy.com/v1/gifs/random?api_key=${API_KEY}`;
+        // const response = await axios.get(url);
+        const response = await axios.get("/v1/gifs/random", {
+            params: { api_key: API_KEY }
+        }); 
+        const { data } = response;
+        const imageSource = data.data.images.downsized_large.url;
         setGif(imageSource);
         console.log("call ke bad");
         console.log(response)
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         fetchData();
-    },[])
+    }, [])
 
-    return(
-        <div>
-            <div>A RANDOM GIF</div>
-            <div>
-                <img src={gif} alt="random gif" />
+    return (
+        <div className="w-11/12 max-w-[450px] bg-green-500 rounded-2xl border border-white shadow-2xl
+        flex flex-col items-center gap-y-5 mt-[15px] p-5 transition-all duration-500 hover:scale-105 hover:shadow-[0_20px_50px_rgba(34,_197,_94,_0.5)]">
+            <h1 className="text-2xl uppercase underline font-bold text-white tracking-widest text-center">
+                A Random Gif
+            </h1>
+
+            <div className="w-full flex justify-center items-center min-h-[250px] bg-green-100/20 rounded-xl overflow-hidden shadow-inner">
+                <img src={gif} alt="random gif" className="max-w-full max-h-[350px] object-contain transition-all duration-700 hover:scale-110" />
             </div>
-            <button onClick={()=>fetchData()}>Generate</button>
+
+            <button
+                onClick={() => fetchData()}
+                className="w-10/12 bg-white text-green-600 text-xl font-bold py-3 rounded-lg 
+                hover:bg-green-600 hover:text-white transition-all duration-300 transform active:scale-95 shadow-md hover:shadow-lg uppercase tracking-wider"
+            >
+                Generate
+            </button>
         </div>
-    )
+    );
 }
 
 export default Random;
